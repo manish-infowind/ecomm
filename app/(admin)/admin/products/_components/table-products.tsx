@@ -9,53 +9,59 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import Spinner from "@/components/Spinner";
 import Image from "next/image";
-import toast from "react-hot-toast";
 import Link from "next/link";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
-import formatDate, { sortByDate } from "@/app/utils/formateDate";
 import TitleHeader from "@/app/(admin)/_components/title-header";
 
-type createData = {
-  title: string;
-  description: string;
-  price: number;
-  featured: boolean;
-  id: string;
-  imageURLs: string[];
-  category: string;
-  createdAt: string;
+// Mock data
+const mockProducts = [
+  {
+    id: "1",
+    title: "Sample T-Shirt",
+    description: "A comfortable cotton t-shirt",
+    price: 29.99,
+    featured: true,
+    imageURLs: ["/logo.png"],
+    category: "clothing",
+    createdAt: "2024-01-15T10:30:00Z",
+  },
+  {
+    id: "2",
+    title: "Running Shoes",
+    description: "High-performance running shoes",
+    price: 89.99,
+    featured: false,
+    imageURLs: ["/logo.png"],
+    category: "footwear",
+    createdAt: "2024-01-14T15:45:00Z",
+  },
+  {
+    id: "3",
+    title: "Wireless Headphones",
+    description: "Premium wireless headphones",
+    price: 149.99,
+    featured: true,
+    imageURLs: ["/logo.png"],
+    category: "electronics",
+    createdAt: "2024-01-13T09:20:00Z",
+  },
+];
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
 };
 
 export default function ProductTable() {
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 5;
-  const baseUrl = "https://kemal-web-storage.s3.eu-north-1.amazonaws.com";
 
-  const queryClient = useQueryClient();
+  const data = mockProducts;
 
-  const { error, data, isLoading } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const { data } = await axios.get("/api/product");
-
-      const sortedData = sortByDate(data);
-      return sortedData as createData[];
-    },
-  });
-
-  const deleteTask = async (id: string) => {
-    try {
-      const res = await axios.delete(`/api/product/${id}`);
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Task deleted");
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
+  const deleteTask = (id: string) => {
+    console.log("Delete product:", id);
+    // Mock delete action
   };
 
   const offset = currentPage * productsPerPage;
@@ -65,13 +71,6 @@ export default function ProductTable() {
     setCurrentPage(selectedPage.selected);
   };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (error) {
-    return <p>Something went wrong!</p>;
-  }
   return (
     <>
       <TitleHeader
@@ -87,7 +86,6 @@ export default function ProductTable() {
               <TableCell width={5}>
                 <p className="text-gray-700">Image</p>
               </TableCell>
-
               <TableCell>
                 <p className="text-gray-700">Name</p>
               </TableCell>
@@ -112,14 +110,14 @@ export default function ProductTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentProducts?.map((product: createData) => (
+            {currentProducts?.map((product: any) => (
               <TableRow
                 key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   <Image
-                    src={`${baseUrl}${product.imageURLs[0]}`}
+                    src={product.imageURLs[0]}
                     alt="Product Image"
                     className="border rounded-sm"
                     width={60}

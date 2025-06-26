@@ -6,41 +6,39 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Spinner from "@/components/Spinner";
-import formatDate, { sortByDate } from "@/app/utils/formateDate";
 import ReactPaginate from "react-paginate";
 import { useState } from "react";
 import TitleHeader from "@/app/(admin)/_components/title-header";
 
-type OrderItem = {
-  id: string;
-  orderId: string;
-  productName: string;
-};
+// Mock data
+const mockOrders = [
+  {
+    id: "1",
+    isPaid: true,
+    phone: "+1234567890",
+    address: "123 Main St, City, State 12345",
+    createdAt: "2024-01-15T10:30:00Z",
+    orderItems: [{ id: "1", orderId: "1", productName: "Sample T-Shirt" }],
+  },
+  {
+    id: "2",
+    isPaid: false,
+    phone: "+0987654321",
+    address: "456 Oak Ave, Town, State 67890",
+    createdAt: "2024-01-14T15:45:00Z",
+    orderItems: [{ id: "2", orderId: "2", productName: "Running Shoes" }],
+  },
+];
 
-type Order = {
-  id: string;
-  isPaid: boolean;
-  phone: string;
-  address: string;
-  createdAt: string;
-  orderItems: OrderItem[];
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
 };
 
 const TableOrders = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 5;
 
-  const { error, data, isLoading } = useQuery({
-    queryKey: ["orders"],
-    queryFn: async () => {
-      const { data } = await axios.get("/api/orders");
-      const sortedData = sortByDate(data);
-      return sortedData as Order[];
-    },
-  });
+  const data = mockOrders;
 
   const offset = currentPage * productsPerPage;
   const currentProducts = data?.slice(offset, offset + productsPerPage);
@@ -48,14 +46,6 @@ const TableOrders = () => {
   const handlePageClick = (selectedPage: { selected: number }) => {
     setCurrentPage(selectedPage.selected);
   };
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (error) {
-    return <p>Something went wrong!</p>;
-  }
 
   return (
     <>
@@ -92,7 +82,7 @@ const TableOrders = () => {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {order.orderItems[0].productName || ""}
+                  {order.orderItems[0]?.productName || ""}
                 </TableCell>
                 <TableCell align="left">{order.phone}</TableCell>
                 <TableCell align="center">{order.address}</TableCell>

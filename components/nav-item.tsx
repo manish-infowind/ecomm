@@ -1,12 +1,13 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
 const NavItem = () => {
   const pathname = usePathname();
-  const user = useUser();
+  
+  // Mock user state - set to true to show admin link
+  const isAdmin = true;
 
   const routes = [
     {
@@ -26,8 +27,6 @@ const NavItem = () => {
       href: "/admin",
     },
   ];
-
-  const isAdmin = user.user && user.user.unsafeMetadata.isAdmin;
 
   return (
     <div className="flex items-center gap-2 mx-2 max-md:flex-col max-md:items-start max-md:mt-3">

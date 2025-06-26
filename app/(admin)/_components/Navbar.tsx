@@ -2,8 +2,14 @@ import Logo from "@/components/Logo";
 import React from "react";
 import CreateButton from "./create-button";
 import MobileSidebar from "./mobile-sidebar";
-import { UserButton } from "@clerk/nextjs";
 import Sidebar from "./Sidebar";
+
+// Mock user button component
+const MockUserButton = () => (
+  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+    <span className="text-sm font-semibold">U</span>
+  </div>
+);
 
 const Navbar = () => {
   return (
@@ -17,17 +23,7 @@ const Navbar = () => {
       </div>
       <div className="flex items-center gap-x-4">
         <CreateButton />
-        <UserButton
-          afterSignOutUrl="/"
-          appearance={{
-            elements: {
-              avatarBox: {
-                height: 30,
-                width: 30,
-              },
-            },
-          }}
-        />
+        <MockUserButton />
       </div>
     </nav>
   );
